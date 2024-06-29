@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <!--日志目录 全局参数设置-->
+        <Property name="basedir">src/test/java/com/soos/apps/log</Property>
+        <Property name="log_name">apps</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        <RollingFile name="RollingFile" fileName="${basedir}/${log_name}.log" append="true" filePattern="${basedir}/$${date:yyyy-MM}/${log_name}-%d{MM-dd-yyyy}-%i.log.zip">
+            <!--            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>-->
+            <PatternLayout pattern="%highlight{[%d{yyyy-MM-dd HH:mm:ss.SSS}] - [%p] - [%c:%L] - [Method = %M] - [%m]}%n"/>
+            <Policies>
+                <!--单个日志文件大小，-->
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+                <!--只留一个文件，其他的全部压缩-->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <!--max参数指定了计数器的最大值。一旦计数器达到了最大值，过旧的文件将被删除-->
+            <DefaultRolloverStrategy max="30" compressionLevel="9">
+                <!--basePath指定了扫描开始路径，为baseDir文件夹。maxDepth指定了目录扫描深度，为2表示扫描baseDir文件夹及其子文件夹。IfFileName指定了文件名需满足的条件，IfLastModified指定了文件修改时间需要满足的条件。-->
+                <Delete basePath="${basedir}" maxDepth="2">
+                    <IfFileName glob="*/*.log.zip"/>
+                    <IfLastModified age="7d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+        <!--        <File name="File" fileName="src/test/java/com/soos/apps/log/app.log">-->
+        <!--            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>-->
+        <!--        </File>-->
+    </Appenders>
+    <Loggers>
+        <!--        指定com.soos.apps包,日志水平为info-->
+        <!--        <Logger name="com.soos.apps" level="INFO" />-->
+        <!--        根标签：包含所有包，日志水平为info-->
+        <Root level="info">
+            <!--            上面Appenders下子标签的name对应ref，相当于路由-->
+            <!--            <AppenderRef ref="Console"/>-->
+            <!--            <AppenderRef ref="File"/>-->
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>
